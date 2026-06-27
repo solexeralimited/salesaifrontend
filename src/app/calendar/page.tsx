@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
+import { CalendarDays, ChevronLeft, ChevronRight } from 'lucide-react';
 import AppLayout from '@/components/layout/AppLayout';
 import { PageHeader, Button } from '@/components/ui';
 import { calendarApi } from '@/lib/api';
@@ -43,9 +44,9 @@ export default function CalendarPage() {
         title={currentMonth.toLocaleDateString('en', { month: 'long', year: 'numeric' })}
         actions={
           <>
-            <Button size="sm" onClick={() => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1))}>‹</Button>
+            <Button size="sm" onClick={() => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1))}><ChevronLeft className="w-4 h-4" /></Button>
             <Button size="sm" onClick={() => setCurrentMonth(new Date())}>Today</Button>
-            <Button size="sm" onClick={() => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1))}>›</Button>
+            <Button size="sm" onClick={() => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1))}><ChevronRight className="w-4 h-4" /></Button>
           </>
         }
       />
@@ -91,7 +92,7 @@ export default function CalendarPage() {
                 .sort((a, b) => new Date(a.scheduled_at).getTime() - new Date(b.scheduled_at).getTime())
                 .map(m => (
                   <div key={m.id} className="bg-white border border-gray-200 rounded-lg px-3 md:px-4 py-3 flex items-start md:items-center gap-3 md:gap-4">
-                    <div className="text-xl md:text-2xl mt-0.5 md:mt-0">📅</div>
+                    <CalendarDays className="w-5 h-5 text-blue-400 mt-0.5 md:mt-0 flex-shrink-0" />
                     <div className="flex-1 min-w-0">
                       <div className="font-medium text-sm text-gray-900">{m.title}</div>
                       <div className="text-xs text-gray-500">{m.lead_name} · {m.assigned_name}</div>

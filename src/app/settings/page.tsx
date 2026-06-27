@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
+import { MessageCircle, Mail, CalendarDays, Bell, type LucideIcon } from 'lucide-react';
 import AppLayout from '@/components/layout/AppLayout';
 import { PageHeader, Button, Card } from '@/components/ui';
 import { companyApi } from '@/lib/api';
@@ -38,11 +39,11 @@ export default function SettingsPage() {
   const set = (key: keyof Company, value: string | number) =>
     setCompany(c => c ? { ...c, [key]: value } : c);
 
-  const integrations = [
-    { name: 'WhatsApp Business API', status: 'configured', icon: '📱' },
-    { name: 'SendGrid (email)', status: 'configured', icon: '✉️' },
-    { name: 'Google Calendar', status: 'not configured', icon: '📅' },
-    { name: 'Slack (alerts)', status: 'not configured', icon: '📣' },
+  const integrations: { name: string; status: string; icon: LucideIcon }[] = [
+    { name: 'WhatsApp Business API', status: 'configured', icon: MessageCircle },
+    { name: 'SendGrid (email)', status: 'configured', icon: Mail },
+    { name: 'Google Calendar', status: 'not configured', icon: CalendarDays },
+    { name: 'Slack (alerts)', status: 'not configured', icon: Bell },
   ];
 
   return (
@@ -121,7 +122,7 @@ export default function SettingsPage() {
           <div className="space-y-3">
             {integrations.map(int => (
               <div key={int.name} className="flex items-center gap-3 py-2">
-                <span className="text-xl">{int.icon}</span>
+                <int.icon className="w-5 h-5 text-gray-500 flex-shrink-0" />
                 <span className="text-sm text-gray-700 flex-1">{int.name}</span>
                 <span className={`text-xs px-2 py-0.5 rounded-full ${int.status === 'configured' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
                   {int.status}

@@ -2,6 +2,7 @@
 import { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { Upload, Plus, Users } from 'lucide-react';
 import AppLayout from '@/components/layout/AppLayout';
 import { ScorePill, Badge, PageHeader, Button, EmptyState } from '@/components/ui';
 import { leadsApi } from '@/lib/api';
@@ -66,10 +67,10 @@ export default function LeadsPage() {
           <>
             <input ref={fileRef} type="file" accept=".csv" className="hidden" onChange={handleCsvImport} />
             <Button onClick={() => fileRef.current?.click()} disabled={importing} size="sm">
-              {importing ? 'Importing...' : '⬆ Import CSV'}
+              <Upload className="w-3.5 h-3.5" />{importing ? 'Importing...' : 'Import CSV'}
             </Button>
             <Link href="/leads/new">
-              <Button variant="primary" size="sm">+ New lead</Button>
+              <Button variant="primary" size="sm"><Plus className="w-3.5 h-3.5" />New lead</Button>
             </Link>
           </>
         }
@@ -102,7 +103,7 @@ export default function LeadsPage() {
           {loading ? (
             <div className="flex items-center justify-center h-48 text-gray-400">Loading leads…</div>
           ) : leads.length === 0 ? (
-            <EmptyState icon="👥" title="No leads yet" description="Import a CSV or add your first lead to get started." />
+            <EmptyState icon={<Users className="w-10 h-10" />} title="No leads yet" description="Import a CSV or add your first lead to get started." />
           ) : (
             <>
               {/* Mobile card list */}

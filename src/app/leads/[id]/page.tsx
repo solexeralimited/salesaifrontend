@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { MessageSquare, Bot, Phone, Mail } from 'lucide-react';
 import AppLayout from '@/components/layout/AppLayout';
 import { ScorePill, Card, PageHeader, Button, Badge } from '@/components/ui';
 import { leadsApi } from '@/lib/api';
@@ -52,10 +53,10 @@ export default function LeadDetailPage() {
         actions={
           <>
             <Link href={`/conversations?leadId=${lead.id}`}>
-              <Button size="sm">💬 Conversation</Button>
+              <Button size="sm"><MessageSquare className="w-3.5 h-3.5" />Conversation</Button>
             </Link>
             <Button size="sm" variant={lead.ai_mode_active ? 'secondary' : 'primary'} onClick={toggleAI}>
-              🤖 AI {lead.ai_mode_active ? 'on' : 'off'}
+              <Bot className="w-3.5 h-3.5" />AI {lead.ai_mode_active ? 'on' : 'off'}
             </Button>
           </>
         }
@@ -69,9 +70,9 @@ export default function LeadDetailPage() {
           <div className="flex-1">
             <div className="text-lg font-semibold text-gray-900">{lead.name}</div>
             <div className="text-sm text-gray-500 mt-0.5">{lead.company_name}</div>
-            <div className="flex items-center gap-3 mt-2 text-sm text-gray-600">
-              {lead.phone && <span>📱 {lead.phone}</span>}
-              {lead.email && <span>✉ {lead.email}</span>}
+            <div className="flex items-center gap-3 mt-2 text-sm text-gray-600 flex-wrap">
+              {lead.phone && <span className="flex items-center gap-1"><Phone className="w-3.5 h-3.5 text-gray-400" />{lead.phone}</span>}
+              {lead.email && <span className="flex items-center gap-1"><Mail className="w-3.5 h-3.5 text-gray-400" />{lead.email}</span>}
             </div>
           </div>
           <div className="text-center">

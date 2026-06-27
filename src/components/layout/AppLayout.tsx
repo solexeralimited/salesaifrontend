@@ -2,32 +2,37 @@
 import { ReactNode, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
+import {
+  LayoutDashboard, Users, MessageSquare, CalendarDays, Zap,
+  BookOpen, BarChart3, Settings as SettingsIcon,
+  Menu, X, LogOut, type LucideIcon,
+} from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 
-const nav = [
-  { section: 'Overview', items: [{ href: '/dashboard', label: 'Dashboard', icon: '⬡' }] },
+const nav: { section: string; items: { href: string; label: string; icon: LucideIcon }[] }[] = [
+  { section: 'Overview', items: [{ href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard }] },
   {
     section: 'Sales',
     items: [
-      { href: '/leads', label: 'Leads', icon: '👥' },
-      { href: '/conversations', label: 'Conversations', icon: '💬' },
-      { href: '/calendar', label: 'Calendar', icon: '📅' },
+      { href: '/leads', label: 'Leads', icon: Users },
+      { href: '/conversations', label: 'Conversations', icon: MessageSquare },
+      { href: '/calendar', label: 'Calendar', icon: CalendarDays },
     ],
   },
   {
     section: 'Automation',
     items: [
-      { href: '/workflow', label: 'Workflows', icon: '⚡' },
-      { href: '/knowledge-base', label: 'Knowledge base', icon: '📚' },
+      { href: '/workflow', label: 'Workflows', icon: Zap },
+      { href: '/knowledge-base', label: 'Knowledge base', icon: BookOpen },
     ],
   },
   {
     section: 'Reporting',
-    items: [{ href: '/analytics', label: 'Analytics', icon: '📊' }],
+    items: [{ href: '/analytics', label: 'Analytics', icon: BarChart3 }],
   },
   {
     section: 'System',
-    items: [{ href: '/settings', label: 'Settings', icon: '⚙️' }],
+    items: [{ href: '/settings', label: 'Settings', icon: SettingsIcon }],
   },
 ];
 
@@ -70,9 +75,9 @@ export default function AppLayout({ children }: { children: ReactNode }) {
           <div className="w-7 h-7 rounded-lg bg-blue-600 flex items-center justify-center text-white text-xs font-bold">S</div>
           <span className="font-semibold text-sm text-gray-800">SalesAI</span>
           <button
-            className="ml-auto md:hidden text-gray-400 hover:text-gray-600 text-lg leading-none"
+            className="ml-auto md:hidden text-gray-400 hover:text-gray-600"
             onClick={() => setSidebarOpen(false)}
-          >✕</button>
+          ><X className="w-4 h-4" /></button>
         </div>
 
         <nav className="flex-1 overflow-y-auto py-2">
@@ -94,7 +99,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
                         : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
                     }`}
                   >
-                    <span className="text-base">{item.icon}</span>
+                    <item.icon className="w-4 h-4 flex-shrink-0" />
                     {item.label}
                   </Link>
                 );
@@ -112,7 +117,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
               <div className="text-xs font-medium text-gray-800 truncate">{user.name}</div>
               <div className="text-[10px] text-gray-400 capitalize">{user.role}</div>
             </div>
-            <button onClick={logout} className="text-gray-400 hover:text-gray-600 text-xs" title="Sign out">↩</button>
+            <button onClick={logout} className="text-gray-400 hover:text-gray-600" title="Sign out"><LogOut className="w-3.5 h-3.5" /></button>
           </div>
         </div>
       </aside>
@@ -123,9 +128,9 @@ export default function AppLayout({ children }: { children: ReactNode }) {
         <div className="md:hidden flex items-center gap-3 px-4 py-3 bg-white border-b border-gray-200 flex-shrink-0">
           <button
             onClick={() => setSidebarOpen(true)}
-            className="text-gray-600 hover:text-gray-900 text-xl leading-none"
+            className="text-gray-600 hover:text-gray-900"
             aria-label="Open menu"
-          >☰</button>
+          ><Menu className="w-5 h-5" /></button>
           <div className="w-6 h-6 rounded-md bg-blue-600 flex items-center justify-center text-white text-xs font-bold">S</div>
           <span className="font-semibold text-sm text-gray-800">SalesAI</span>
         </div>

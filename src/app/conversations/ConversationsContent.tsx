@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { ArrowLeft, Bot, Zap, User, Users } from 'lucide-react';
 import { ScorePill, Button } from '@/components/ui';
 import { conversationsApi } from '@/lib/api';
 import { PageHeader } from '@/components/ui';
@@ -109,19 +110,19 @@ export default function ConversationsContent() {
           `}>
             <div className="px-3 md:px-4 py-3 border-b border-gray-200 bg-white flex items-center gap-2 md:gap-3 flex-shrink-0">
               <button
-                className="md:hidden text-gray-500 hover:text-gray-800 mr-1 text-lg leading-none"
+                className="md:hidden text-gray-500 hover:text-gray-800 mr-1"
                 onClick={() => setMobileView('list')}
                 aria-label="Back to conversations"
-              >←</button>
+              ><ArrowLeft className="w-5 h-5" /></button>
               <span className="font-medium text-sm text-gray-900 truncate">{selected.lead_name}</span>
               <span className="text-gray-300 hidden sm:inline">·</span>
               <ScorePill score={selected.interest_score} />
               <div className="ml-auto flex gap-1.5 md:gap-2 flex-shrink-0">
                 <Button size="sm" variant={selected.ai_active ? 'primary' : 'secondary'} onClick={toggleAI}>
-                  🤖 <span className="hidden sm:inline">AI </span>{selected.ai_active ? 'on' : 'off'}
+                  <Bot className="w-3.5 h-3.5" /><span className="hidden sm:inline">AI </span>{selected.ai_active ? 'on' : 'off'}
                 </Button>
                 <Button size="sm" onClick={triggerAIReply} disabled={aiReplying}>
-                  {aiReplying ? '...' : '⚡ AI reply'}
+                  <Zap className="w-3.5 h-3.5" />{aiReplying ? 'Thinking…' : 'AI reply'}
                 </Button>
               </div>
             </div>
@@ -132,9 +133,9 @@ export default function ConversationsContent() {
                 const isAI = m.sender_type === 'ai';
                 return (
                   <div key={m.id} className={`flex flex-col ${isOutbound ? 'items-end' : 'items-start'}`}>
-                    <div className="text-[10px] text-gray-400 mb-0.5">
-                      {isAI ? '🤖 AI' : isOutbound ? '👤 You' : '👥 Customer'}
-                      {' · '}{new Date(m.created_at).toLocaleTimeString('en', { hour: '2-digit', minute: '2-digit' })}
+                    <div className="flex items-center gap-1 text-[10px] text-gray-400 mb-0.5">
+                      {isAI ? <><Bot className="w-3 h-3" />AI</> : isOutbound ? <><User className="w-3 h-3" />You</> : <><Users className="w-3 h-3" />Customer</>}
+                      <span>·</span>{new Date(m.created_at).toLocaleTimeString('en', { hour: '2-digit', minute: '2-digit' })}
                     </div>
                     <div className={`max-w-[85%] md:max-w-sm px-3.5 py-2.5 rounded-xl text-sm leading-relaxed ${
                       isOutbound ? (isAI ? 'bg-purple-100 text-purple-900' : 'bg-blue-600 text-white')
