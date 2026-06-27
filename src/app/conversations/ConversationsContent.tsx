@@ -24,6 +24,7 @@ export default function ConversationsContent() {
   const [newMsg, setNewMsg] = useState('');
   const [sending, setSending] = useState(false);
   const [aiReplying, setAiReplying] = useState(false);
+  const [mobileView, setMobileView] = useState<'list' | 'chat'>('list');
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -39,6 +40,7 @@ export default function ConversationsContent() {
 
   const selectConvo = async (c: Conversation) => {
     setSelected(c);
+    setMobileView('chat');
     const { data } = await conversationsApi.messages(c.id);
     setMessages(data.messages);
     setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
@@ -74,8 +76,15 @@ export default function ConversationsContent() {
     <div className="flex flex-col flex-1 overflow-hidden">
       <PageHeader title="Conversations" />
       <div className="flex flex-1 overflow-hidden">
-        {/* List */}
-        <div className="w-72 flex-shrink-0 border-r border-gray-200 overflow-y-auto bg-white">
+        {/* Conversation list — full-width on mobile when mobileView='list', hidden when chat open */}
+        <div className={`
+          flex-col border-r border-gray-200 overflow-y-auto bg-white
+          w-full md:w-72 md:flex-shrink-0
+          ${mobileView === 'chat' ? 'hidden md:flex' : 'flex'}
+        `}>
+          {convos.length === 0 && (
+            <div className="flex items-center justify-center h-32 text-gray-400 text-sm">No conversations yet</div>
+          )}
           {convos.map((c) => (
             <button key={c.id} onClick={() => selectConvo(c)}
               className={`w-full text-left px-4 py-3.5 border-b border-gray-100 hover:bg-gray-50 transition-colors ${selected?.id === c.id ? 'bg-blue-50 border-l-2 border-l-blue-600' : ''}`}>
@@ -92,15 +101,24 @@ export default function ConversationsContent() {
           ))}
         </div>
 
+        {/* Chat pane — full-width on mobile when mobileView='chat' */}
         {selected ? (
-          <div className="flex-1 flex flex-col overflow-hidden">
-            <div className="px-4 py-3 border-b border-gray-200 bg-white flex items-center gap-3 flex-shrink-0">
-              <span className="font-medium text-sm text-gray-900">{selected.lead_name}</span>
-              <span className="text-gray-300">·</span>
+          <div className={`
+            flex-1 flex-col overflow-hidden
+            ${mobileView === 'list' ? 'hidden md:flex' : 'flex'}
+          `}>
+            <div className="px-3 md:px-4 py-3 border-b border-gray-200 bg-white flex items-center gap-2 md:gap-3 flex-shrink-0">
+              <button
+                className="md:hidden text-gray-500 hover:text-gray-800 mr-1 text-lg leading-none"
+                onClick={() => setMobileView('list')}
+                aria-label="Back to conversations"
+              >←</button>
+              <span className="font-medium text-sm text-gray-900 truncate">{selected.lead_name}</span>
+              <span className="text-gray-300 hidden sm:inline">·</span>
               <ScorePill score={selected.interest_score} />
-              <div className="ml-auto flex gap-2">
+              <div className="ml-auto flex gap-1.5 md:gap-2 flex-shrink-0">
                 <Button size="sm" variant={selected.ai_active ? 'primary' : 'secondary'} onClick={toggleAI}>
-                  🤖 AI {selected.ai_active ? 'on' : 'off'}
+                  🤖 <span className="hidden sm:inline">AI </span>{selected.ai_active ? 'on' : 'off'}
                 </Button>
                 <Button size="sm" onClick={triggerAIReply} disabled={aiReplying}>
                   {aiReplying ? '...' : '⚡ AI reply'}
@@ -108,7 +126,7 @@ export default function ConversationsContent() {
               </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-gray-50">
+            <div className="flex-1 overflow-y-auto p-3 md:p-4 space-y-3 bg-gray-50">
               {messages.map((m) => {
                 const isOutbound = m.direction === 'outbound';
                 const isAI = m.sender_type === 'ai';
@@ -118,7 +136,7 @@ export default function ConversationsContent() {
                       {isAI ? '🤖 AI' : isOutbound ? '👤 You' : '👥 Customer'}
                       {' · '}{new Date(m.created_at).toLocaleTimeString('en', { hour: '2-digit', minute: '2-digit' })}
                     </div>
-                    <div className={`max-w-sm px-3.5 py-2.5 rounded-xl text-sm leading-relaxed ${
+                    <div className={`max-w-[85%] md:max-w-sm px-3.5 py-2.5 rounded-xl text-sm leading-relaxed ${
                       isOutbound ? (isAI ? 'bg-purple-100 text-purple-900' : 'bg-blue-600 text-white')
                         : 'bg-white border border-gray-200 text-gray-800'}`}>
                       {m.content}
@@ -132,7 +150,7 @@ export default function ConversationsContent() {
             <div className="p-3 border-t border-gray-200 bg-white flex gap-2">
               <textarea value={newMsg} onChange={(e) => setNewMsg(e.target.value)}
                 onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }}}
-                placeholder="Type a message… (Enter to send)"
+                placeholder="Type a message…"
                 className="flex-1 resize-none border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500" rows={2} />
               <Button variant="primary" onClick={sendMessage} disabled={sending || !newMsg.trim()}>
                 {sending ? '…' : 'Send'}
@@ -140,7 +158,7 @@ export default function ConversationsContent() {
             </div>
           </div>
         ) : (
-          <div className="flex-1 flex items-center justify-center text-gray-400 text-sm">
+          <div className="hidden md:flex flex-1 items-center justify-center text-gray-400 text-sm">
             Select a conversation to start
           </div>
         )}

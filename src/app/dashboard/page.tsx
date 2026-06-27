@@ -40,7 +40,7 @@ export default function DashboardPage() {
   return (
     <AppLayout>
       <PageHeader title="Dashboard" subtitle="Overview of your sales pipeline" />
-      <div className="flex-1 overflow-y-auto p-6 space-y-6">
+      <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-4 md:space-y-6">
         {loading ? (
           <div className="flex items-center justify-center h-48 text-gray-400">Loading...</div>
         ) : (
@@ -71,16 +71,16 @@ export default function DashboardPage() {
 
               <Card>
                 <h3 className="text-sm font-medium text-gray-700 mb-4">Interest score distribution</h3>
-                <div className="flex items-center gap-6">
+                <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
                   <PieChart width={160} height={160}>
                     <Pie data={tierData} cx={75} cy={75} innerRadius={45} outerRadius={70} dataKey="value">
                       {tierData.map((t, i) => <Cell key={i} fill={t.color} />)}
                     </Pie>
                   </PieChart>
-                  <div className="space-y-2">
+                  <div className="space-y-2 w-full sm:w-auto">
                     {tierData.map((t) => (
                       <div key={t.name} className="flex items-center gap-2 text-sm">
-                        <div className="w-3 h-3 rounded-full" style={{ backgroundColor: t.color }} />
+                        <div className="w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: t.color }} />
                         <span className="text-gray-600">{t.name}</span>
                         <span className="font-medium ml-auto">{t.value}</span>
                       </div>
