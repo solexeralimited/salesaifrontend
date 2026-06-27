@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
+import { Trash2, BookOpen, Plus } from 'lucide-react';
 import AppLayout from '@/components/layout/AppLayout';
 import { PageHeader, Button, Card, EmptyState } from '@/components/ui';
 import { kbApi } from '@/lib/api';
@@ -43,7 +44,7 @@ export default function KnowledgeBasePage() {
       <PageHeader
         title="Knowledge base"
         subtitle="Articles the AI uses to answer customer questions"
-        actions={<Button variant="primary" size="sm" onClick={() => setCreating(true)}>+ Add article</Button>}
+        actions={<Button variant="primary" size="sm" onClick={() => setCreating(true)}><Plus className="w-3.5 h-3.5" />Add article</Button>}
       />
       <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
         {/* Mobile: horizontal scrolling category pills */}
@@ -116,7 +117,7 @@ export default function KnowledgeBasePage() {
           )}
 
           {articles.length === 0 ? (
-            <EmptyState icon="📚" title="No articles yet" description="Add articles to help the AI answer customer questions." />
+            <EmptyState icon={<BookOpen className="w-10 h-10" />} title="No articles yet" description="Add articles to help the AI answer customer questions." />
           ) : (
             <div className="space-y-3">
               {articles.map(a => (
@@ -130,7 +131,7 @@ export default function KnowledgeBasePage() {
                       <h4 className="font-medium text-gray-900 text-sm">{a.title}</h4>
                       <p className="text-xs text-gray-500 mt-1 line-clamp-2">{a.content}</p>
                     </div>
-                    <button onClick={() => deleteArticle(a.id)} className="text-gray-300 hover:text-red-500 text-sm flex-shrink-0">🗑</button>
+                    <button onClick={() => deleteArticle(a.id)} className="text-gray-300 hover:text-red-500 flex-shrink-0"><Trash2 className="w-4 h-4" /></button>
                   </div>
                 </div>
               ))}

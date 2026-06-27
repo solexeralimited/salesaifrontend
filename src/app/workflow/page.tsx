@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
+import { Zap, Plus, Pause, Play } from 'lucide-react';
 import AppLayout from '@/components/layout/AppLayout';
 import { PageHeader, Button, Card, Badge, EmptyState } from '@/components/ui';
 import { workflowsApi } from '@/lib/api';
@@ -58,7 +59,7 @@ export default function WorkflowPage() {
       <PageHeader
         title="Workflows"
         subtitle="Automated sequences triggered by lead events"
-        actions={<Button variant="primary" size="sm" onClick={() => setCreating(true)}>+ New workflow</Button>}
+        actions={<Button variant="primary" size="sm" onClick={() => setCreating(true)}><Plus className="w-3.5 h-3.5" />New workflow</Button>}
       />
       <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-4 md:space-y-5">
         {creating && (
@@ -82,7 +83,7 @@ export default function WorkflowPage() {
         )}
 
         {workflows.length === 0 && !creating ? (
-          <EmptyState icon="⚡" title="No workflows yet" description="Create automated sequences to engage leads without manual intervention." />
+          <EmptyState icon={<Zap className="w-10 h-10" />} title="No workflows yet" description="Create automated sequences to engage leads without manual intervention." />
         ) : (
           workflows.map(wf => (
             <Card key={wf.id}>
@@ -110,7 +111,7 @@ export default function WorkflowPage() {
                 </div>
                 <div className="flex-shrink-0">
                   <Button size="sm" onClick={() => toggleStatus(wf)}>
-                    {wf.status === 'active' ? '⏸ Pause' : '▶ Activate'}
+                    {wf.status === 'active' ? <><Pause className="w-3.5 h-3.5" />Pause</> : <><Play className="w-3.5 h-3.5" />Activate</>}
                   </Button>
                 </div>
               </div>
