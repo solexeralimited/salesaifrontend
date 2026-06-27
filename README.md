@@ -1,3 +1,13 @@
+
+
+# 2. Frontend (new terminal)
+cd frontend && echo "NEXT_PUBLIC_API_URL=http://localhost:4000/api" > .env.local
+npm install && npm run dev
+
+# 3. Open http://localhost:3000
+# Login: admin@roofpro.nz / demo1234
+
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
