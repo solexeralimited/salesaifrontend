@@ -47,12 +47,12 @@ export function Card({ children, className = '' }: { children: ReactNode; classN
 // Page header
 export function PageHeader({ title, subtitle, actions }: { title: string; subtitle?: string; actions?: ReactNode }) {
   return (
-    <div className="px-6 py-4 border-b border-gray-200 bg-white flex items-center justify-between flex-shrink-0">
-      <div>
-        <h1 className="text-lg font-semibold text-gray-900">{title}</h1>
-        {subtitle && <p className="text-sm text-gray-500 mt-0.5">{subtitle}</p>}
+    <div className="px-4 md:px-6 py-3 md:py-4 border-b border-gray-200 bg-white flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 flex-shrink-0">
+      <div className="min-w-0">
+        <h1 className="text-base md:text-lg font-semibold text-gray-900 truncate">{title}</h1>
+        {subtitle && <p className="text-xs md:text-sm text-gray-500 mt-0.5 truncate">{subtitle}</p>}
       </div>
-      {actions && <div className="flex items-center gap-2">{actions}</div>}
+      {actions && <div className="flex items-center gap-2 flex-shrink-0 flex-wrap">{actions}</div>}
     </div>
   );
 }
