@@ -60,9 +60,9 @@ export default function LeadDetailPage() {
           </>
         }
       />
-      <div className="flex-1 overflow-y-auto p-6 space-y-5">
+      <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-4 md:space-y-5">
         {/* Profile */}
-        <Card className="flex items-center gap-5">
+        <Card className="flex items-start sm:items-center gap-4 sm:gap-5">
           <div className="w-14 h-14 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-semibold text-lg">
             {initials}
           </div>

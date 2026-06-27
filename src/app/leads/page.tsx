@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import AppLayout from '@/components/layout/AppLayout';
 import { ScorePill, Badge, PageHeader, Button, EmptyState } from '@/components/ui';
 import { leadsApi } from '@/lib/api';
@@ -22,6 +23,7 @@ const stageLabel: Record<string, { label: string; variant: 'default' | 'success'
 };
 
 export default function LeadsPage() {
+  const router = useRouter();
   const [leads, setLeads] = useState<Lead[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -75,59 +77,90 @@ export default function LeadsPage() {
 
       <div className="flex-1 overflow-hidden flex flex-col">
         {/* Filters */}
-        <div className="px-6 py-3 border-b border-gray-100 bg-white flex items-center gap-3 flex-shrink-0">
+        <div className="px-4 md:px-6 py-3 border-b border-gray-100 bg-white flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 flex-shrink-0">
           <input
             type="text"
             placeholder="Search name, company, email…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="flex-1 max-w-xs px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500"
+            className="w-full sm:flex-1 sm:max-w-xs px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500"
           />
-          {['', 'green', 'amber', 'red'].map((t) => (
-            <button key={t}
-              onClick={() => setTierFilter(t)}
-              className={`px-3 py-1 text-xs rounded-full border transition-colors ${tierFilter === t ? 'bg-blue-600 text-white border-blue-600' : 'border-gray-300 text-gray-600 hover:border-gray-400'}`}
-            >
-              {t ? t.charAt(0).toUpperCase() + t.slice(1) : 'All'}
-            </button>
-          ))}
+          <div className="flex items-center gap-2 flex-wrap">
+            {['', 'green', 'amber', 'red'].map((t) => (
+              <button key={t}
+                onClick={() => setTierFilter(t)}
+                className={`px-3 py-1 text-xs rounded-full border transition-colors ${tierFilter === t ? 'bg-blue-600 text-white border-blue-600' : 'border-gray-300 text-gray-600 hover:border-gray-400'}`}
+              >
+                {t ? t.charAt(0).toUpperCase() + t.slice(1) : 'All'}
+              </button>
+            ))}
+          </div>
         </div>
 
-        {/* Table */}
+        {/* List / Table */}
         <div className="flex-1 overflow-y-auto">
           {loading ? (
             <div className="flex items-center justify-center h-48 text-gray-400">Loading leads…</div>
           ) : leads.length === 0 ? (
             <EmptyState icon="👥" title="No leads yet" description="Import a CSV or add your first lead to get started." />
           ) : (
-            <table className="w-full text-sm">
-              <thead className="bg-gray-50 sticky top-0">
-                <tr>
-                  {['Name', 'Company', 'Quote', 'Score', 'Stage', 'Assigned', 'Updated'].map(h => (
-                    <th key={h} className="text-left px-4 py-2.5 text-xs font-medium text-gray-500 uppercase tracking-wide">{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100">
+            <>
+              {/* Mobile card list */}
+              <div className="md:hidden divide-y divide-gray-100">
                 {leads.map((lead) => (
-                  <tr key={lead.id} className="hover:bg-gray-50 cursor-pointer" onClick={() => window.location.href = `/leads/${lead.id}`}>
-                    <td className="px-4 py-3 font-medium text-gray-900">{lead.name}</td>
-                    <td className="px-4 py-3 text-gray-500">{lead.company_name || '—'}</td>
-                    <td className="px-4 py-3 text-gray-700">
-                      {lead.quote_value ? `$${Number(lead.quote_value).toLocaleString()}` : '—'}
-                    </td>
-                    <td className="px-4 py-3"><ScorePill score={lead.interest_score} /></td>
-                    <td className="px-4 py-3">
+                  <div
+                    key={lead.id}
+                    className="px-4 py-3 hover:bg-gray-50 cursor-pointer active:bg-gray-100"
+                    onClick={() => router.push(`/leads/${lead.id}`)}
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="font-medium text-gray-900 truncate">{lead.name}</span>
+                      <ScorePill score={lead.interest_score} />
+                    </div>
+                    <div className="text-sm text-gray-500 mt-0.5 truncate">{lead.company_name || '—'}</div>
+                    <div className="flex items-center gap-2 mt-1.5 flex-wrap">
                       <Badge label={stageLabel[lead.stage]?.label || lead.stage} variant={stageLabel[lead.stage]?.variant} />
-                    </td>
-                    <td className="px-4 py-3 text-gray-500">{lead.assigned_name || '—'}</td>
-                    <td className="px-4 py-3 text-gray-400 text-xs">
-                      {new Date(lead.updated_at).toLocaleDateString()}
-                    </td>
-                  </tr>
+                      {lead.quote_value ? (
+                        <span className="text-xs text-gray-500">${Number(lead.quote_value).toLocaleString()}</span>
+                      ) : null}
+                      {lead.assigned_name ? (
+                        <span className="text-xs text-gray-400">{lead.assigned_name}</span>
+                      ) : null}
+                    </div>
+                  </div>
                 ))}
-              </tbody>
-            </table>
+              </div>
+
+              {/* Desktop table */}
+              <table className="hidden md:table w-full text-sm">
+                <thead className="bg-gray-50 sticky top-0">
+                  <tr>
+                    {['Name', 'Company', 'Quote', 'Score', 'Stage', 'Assigned', 'Updated'].map(h => (
+                      <th key={h} className="text-left px-4 py-2.5 text-xs font-medium text-gray-500 uppercase tracking-wide">{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  {leads.map((lead) => (
+                    <tr key={lead.id} className="hover:bg-gray-50 cursor-pointer" onClick={() => router.push(`/leads/${lead.id}`)}>
+                      <td className="px-4 py-3 font-medium text-gray-900">{lead.name}</td>
+                      <td className="px-4 py-3 text-gray-500">{lead.company_name || '—'}</td>
+                      <td className="px-4 py-3 text-gray-700">
+                        {lead.quote_value ? `$${Number(lead.quote_value).toLocaleString()}` : '—'}
+                      </td>
+                      <td className="px-4 py-3"><ScorePill score={lead.interest_score} /></td>
+                      <td className="px-4 py-3">
+                        <Badge label={stageLabel[lead.stage]?.label || lead.stage} variant={stageLabel[lead.stage]?.variant} />
+                      </td>
+                      <td className="px-4 py-3 text-gray-500">{lead.assigned_name || '—'}</td>
+                      <td className="px-4 py-3 text-gray-400 text-xs">
+                        {new Date(lead.updated_at).toLocaleDateString()}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </>
           )}
         </div>
       </div>
