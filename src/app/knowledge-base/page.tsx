@@ -45,9 +45,28 @@ export default function KnowledgeBasePage() {
         subtitle="Articles the AI uses to answer customer questions"
         actions={<Button variant="primary" size="sm" onClick={() => setCreating(true)}>+ Add article</Button>}
       />
-      <div className="flex-1 flex overflow-hidden">
-        {/* Categories sidebar */}
-        <div className="w-52 flex-shrink-0 border-r border-gray-200 bg-white overflow-y-auto p-3">
+      <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
+        {/* Mobile: horizontal scrolling category pills */}
+        <div className="md:hidden flex overflow-x-auto gap-2 px-4 py-3 border-b border-gray-200 bg-white flex-shrink-0 scrollbar-hide">
+          <button
+            onClick={() => setSelected('')}
+            className={`whitespace-nowrap px-3 py-1.5 text-xs rounded-full border flex-shrink-0 ${!selected ? 'bg-blue-600 text-white border-blue-600' : 'border-gray-300 text-gray-600'}`}
+          >
+            All ({articles.length})
+          </button>
+          {categories.map(c => (
+            <button
+              key={c.category}
+              onClick={() => setSelected(c.category)}
+              className={`whitespace-nowrap px-3 py-1.5 text-xs rounded-full border flex-shrink-0 ${selected === c.category ? 'bg-blue-600 text-white border-blue-600' : 'border-gray-300 text-gray-600'}`}
+            >
+              {c.category} ({c.article_count})
+            </button>
+          ))}
+        </div>
+
+        {/* Desktop: vertical sidebar */}
+        <div className="hidden md:block w-52 flex-shrink-0 border-r border-gray-200 bg-white overflow-y-auto p-3">
           <button
             onClick={() => setSelected('')}
             className={`w-full text-left px-3 py-2 text-sm rounded-lg mb-1 ${!selected ? 'bg-blue-50 text-blue-700 font-medium' : 'text-gray-600 hover:bg-gray-100'}`}
@@ -66,7 +85,7 @@ export default function KnowledgeBasePage() {
         </div>
 
         {/* Articles */}
-        <div className="flex-1 overflow-y-auto p-6">
+        <div className="flex-1 overflow-y-auto p-4 md:p-6">
           <div className="mb-4">
             <input
               type="text"

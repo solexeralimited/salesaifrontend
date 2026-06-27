@@ -35,7 +35,7 @@ export default function AnalyticsPage() {
   return (
     <AppLayout>
       <PageHeader title="Analytics" subtitle="Last 30 days" />
-      <div className="flex-1 overflow-y-auto p-6 space-y-6">
+      <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-4 md:space-y-6">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <MetricCard label="Conversion rate" value={`${conversion?.rate || 0}%`} delta={`${conversion?.won || 0} of ${conversion?.total || 0} leads`} deltaUp />
           <MetricCard label="AI resolution rate" value={`${aiResolutionRate}%`} delta="No rep needed" />

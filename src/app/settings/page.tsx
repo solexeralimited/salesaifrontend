@@ -55,12 +55,12 @@ export default function SettingsPage() {
           </Button>
         }
       />
-      <div className="flex-1 overflow-y-auto p-6 space-y-6 max-w-3xl">
+      <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-4 md:space-y-6 max-w-3xl">
         {company && (
           <>
             <Card>
               <h3 className="text-sm font-semibold text-gray-800 mb-4">Company</h3>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {[
                   ['Company name', 'name', 'text'],
                   ['Industry', 'industry', 'text'],
@@ -82,7 +82,7 @@ export default function SettingsPage() {
 
             <Card>
               <h3 className="text-sm font-semibold text-gray-800 mb-4">AI configuration</h3>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs text-gray-500 mb-1">AI persona name</label>
                   <input value={company.ai_persona_name || ''} onChange={(e) => set('ai_persona_name', e.target.value)}
