@@ -118,8 +118,8 @@ export default function ConversationsContent() {
               <span className="text-gray-300 hidden sm:inline">·</span>
               <ScorePill score={selected.interest_score} />
               <div className="ml-auto flex gap-1.5 md:gap-2 flex-shrink-0">
-                <Button size="sm" variant={selected.ai_active ? 'primary' : 'secondary'} onClick={toggleAI}>
-                  <Bot className="w-3.5 h-3.5" /><span className="hidden sm:inline">AI </span>{selected.ai_active ? 'on' : 'off'}
+                <Button size="sm" variant={selected.ai_active ? 'secondary' : 'primary'} onClick={toggleAI}>
+                  <Bot className="w-3.5 h-3.5" />{selected.ai_active ? 'Take over' : 'Hand back to AI'}
                 </Button>
                 <Button size="sm" onClick={triggerAIReply} disabled={aiReplying}>
                   <Zap className="w-3.5 h-3.5" />{aiReplying ? 'Thinking…' : 'AI reply'}
