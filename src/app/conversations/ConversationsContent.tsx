@@ -51,10 +51,9 @@ export default function ConversationsContent() {
     if (!selected || !newMsg.trim()) return;
     setSending(true);
     try {
-      const { data } = await conversationsApi.sendMessage(selected.id, newMsg);
+      const { data } = await conversationsApi.sendMessage(selected.id, newMsg, selected.channel);
       setMessages((m) => [...m, data]);
       setNewMsg('');
-      setSelected((s) => s ? { ...s, ai_active: false } : s);
     } finally { setSending(false); }
   };
 
@@ -118,8 +117,8 @@ export default function ConversationsContent() {
               <span className="text-gray-300 hidden sm:inline">·</span>
               <ScorePill score={selected.interest_score} />
               <div className="ml-auto flex gap-1.5 md:gap-2 flex-shrink-0">
-                <Button size="sm" variant={selected.ai_active ? 'primary' : 'secondary'} onClick={toggleAI}>
-                  <Bot className="w-3.5 h-3.5" /><span className="hidden sm:inline">AI </span>{selected.ai_active ? 'on' : 'off'}
+                <Button size="sm" variant={selected.ai_active ? 'secondary' : 'primary'} onClick={toggleAI}>
+                  <Bot className="w-3.5 h-3.5" />{selected.ai_active ? 'Take over' : 'Hand back to AI'}
                 </Button>
                 <Button size="sm" onClick={triggerAIReply} disabled={aiReplying}>
                   <Zap className="w-3.5 h-3.5" />{aiReplying ? 'Thinking…' : 'AI reply'}
@@ -131,17 +130,32 @@ export default function ConversationsContent() {
               {messages.map((m) => {
                 const isOutbound = m.direction === 'outbound';
                 const isAI = m.sender_type === 'ai';
+                const isButtonReply = !isOutbound && (
+                  m.content === 'Accept your quote' ||
+                  m.content === 'Ask questions' ||
+                  m.content === 'Book a meeting'
+                );
                 return (
                   <div key={m.id} className={`flex flex-col ${isOutbound ? 'items-end' : 'items-start'}`}>
                     <div className="flex items-center gap-1 text-[10px] text-gray-400 mb-0.5">
                       {isAI ? <><Bot className="w-3 h-3" />AI</> : isOutbound ? <><User className="w-3 h-3" />You</> : <><Users className="w-3 h-3" />Customer</>}
                       <span>·</span>{new Date(m.created_at).toLocaleTimeString('en', { hour: '2-digit', minute: '2-digit' })}
+                      {isButtonReply && <span className="ml-1 text-[10px] text-green-600 font-medium">Button tap</span>}
                     </div>
-                    <div className={`max-w-[85%] md:max-w-sm px-3.5 py-2.5 rounded-xl text-sm leading-relaxed ${
-                      isOutbound ? (isAI ? 'bg-purple-100 text-purple-900' : 'bg-blue-600 text-white')
-                        : 'bg-white border border-gray-200 text-gray-800'}`}>
-                      {m.content}
-                    </div>
+                    {isButtonReply ? (
+                      <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-green-50 text-green-700 border border-green-200">
+                        {m.content === 'Accept your quote' && '✅ '}
+                        {m.content === 'Book a meeting' && '📅 '}
+                        {m.content === 'Ask questions' && '💬 '}
+                        {m.content}
+                      </div>
+                    ) : (
+                      <div className={`max-w-[85%] md:max-w-sm px-3.5 py-2.5 rounded-xl text-sm leading-relaxed ${
+                        isOutbound ? (isAI ? 'bg-purple-100 text-purple-900' : 'bg-blue-600 text-white')
+                          : 'bg-white border border-gray-200 text-gray-800'}`}>
+                        {m.content}
+                      </div>
+                    )}
                   </div>
                 );
               })}

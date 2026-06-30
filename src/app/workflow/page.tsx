@@ -21,6 +21,7 @@ const triggerLabels: Record<string, string> = {
 
 const nodeLabels: Record<string, string> = {
   send_whatsapp: '📱 Send WhatsApp',
+  send_whatsapp_template: '📋 Send WhatsApp template',
   send_email: '✉️ Send email',
   notify_slack: '📣 Slack alert',
   update_stage: '🔀 Update stage',
@@ -30,21 +31,24 @@ const nodeLabels: Record<string, string> = {
 export default function WorkflowPage() {
   const [workflows, setWorkflows] = useState<Workflow[]>([]);
   const [creating, setCreating] = useState(false);
-  const [form, setForm] = useState({ name: '', description: '', trigger_type: 'lead_imported' });
+  const [form, setForm] = useState({ name: '', description: '', trigger_type: 'lead_imported', first_action: 'send_whatsapp', template_name: 'quote_ready' });
 
   const fetchWorkflows = () => workflowsApi.list().then(({ data }) => setWorkflows(data));
   useEffect(() => { fetchWorkflows(); }, []);
 
   const createWorkflow = async () => {
+    const firstNode = form.first_action === 'send_whatsapp_template'
+      ? { type: 'send_whatsapp_template', config: { template_name: form.template_name || 'quote_ready' } }
+      : { type: 'send_whatsapp', config: { message: 'Hi {{name}}, following up on your roofing quote!' } };
     await workflowsApi.create({
-      ...form,
-      nodes: [
-        { type: 'send_whatsapp', config: { message: 'Hi {{name}}, following up on your roofing quote!' } },
-      ],
+      name: form.name,
+      description: form.description,
+      trigger_type: form.trigger_type,
+      nodes: [firstNode],
       status: 'draft',
     });
     setCreating(false);
-    setForm({ name: '', description: '', trigger_type: 'lead_imported' });
+    setForm({ name: '', description: '', trigger_type: 'lead_imported', first_action: 'send_whatsapp', template_name: 'quote_ready' });
     fetchWorkflows();
   };
 
@@ -74,6 +78,19 @@ export default function WorkflowPage() {
                 className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500">
                 {Object.entries(triggerLabels).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
               </select>
+              <select value={form.first_action} onChange={e => setForm(f => ({...f, first_action: e.target.value}))}
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500">
+                <option value="send_whatsapp">📱 First action: Send WhatsApp message</option>
+                <option value="send_whatsapp_template">📋 First action: Send WhatsApp template</option>
+              </select>
+              {form.first_action === 'send_whatsapp_template' && (
+                <input
+                  placeholder="Template name (e.g. quote_ready)"
+                  value={form.template_name}
+                  onChange={e => setForm(f => ({...f, template_name: e.target.value}))}
+                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500"
+                />
+              )}
               <div className="flex gap-2">
                 <Button variant="primary" size="sm" onClick={createWorkflow}>Create workflow</Button>
                 <Button size="sm" onClick={() => setCreating(false)}>Cancel</Button>
