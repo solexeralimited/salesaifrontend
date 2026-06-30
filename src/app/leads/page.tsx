@@ -19,6 +19,8 @@ const stageLabel: Record<string, { label: string; variant: 'default' | 'success'
   replied: { label: 'Replied', variant: 'info' },
   meeting: { label: 'Meeting booked', variant: 'success' },
   quoted: { label: 'Quoted', variant: 'warning' },
+  quote_accepted: { label: 'Quote accepted', variant: 'success' },
+  meeting_requested: { label: 'Meeting requested', variant: 'info' },
   won: { label: 'Won', variant: 'success' },
   lost: { label: 'Lost', variant: 'danger' },
 };

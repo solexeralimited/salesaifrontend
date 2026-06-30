@@ -107,7 +107,7 @@ export default function LeadDetailPage() {
           <Card>
             <h3 className="text-sm font-medium text-gray-700 mb-3">Move stage</h3>
             <div className="flex flex-col gap-2">
-              {['new','contacted','replied','meeting','quoted','won','lost'].map(s => (
+              {['new','contacted','replied','meeting','quoted','quote_accepted','meeting_requested','won','lost'].map(s => (
                 <button
                   key={s}
                   onClick={() => updateStage(s)}
@@ -118,7 +118,7 @@ export default function LeadDetailPage() {
                       : 'border-gray-200 text-gray-600 hover:border-gray-400'
                   }`}
                 >
-                  {s === 'won' ? '✅ ' : s === 'lost' ? '❌ ' : ''}{s.charAt(0).toUpperCase() + s.slice(1)}
+                  {s === 'won' ? '✅ ' : s === 'lost' ? '❌ ' : s === 'quote_accepted' ? '✅ Quote accepted' : s === 'meeting_requested' ? '📅 Meeting requested' : s.charAt(0).toUpperCase() + s.slice(1)}
                 </button>
               ))}
             </div>
