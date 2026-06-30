@@ -51,10 +51,9 @@ export default function ConversationsContent() {
     if (!selected || !newMsg.trim()) return;
     setSending(true);
     try {
-      const { data } = await conversationsApi.sendMessage(selected.id, newMsg);
+      const { data } = await conversationsApi.sendMessage(selected.id, newMsg, selected.channel);
       setMessages((m) => [...m, data]);
       setNewMsg('');
-      setSelected((s) => s ? { ...s, ai_active: false } : s);
     } finally { setSending(false); }
   };
 
