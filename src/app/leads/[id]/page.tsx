@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { MessageSquare, Bot, Phone, Mail } from 'lucide-react';
+import { MessageSquare, Bot, Phone, Mail, Trash2 } from 'lucide-react';
 import AppLayout from '@/components/layout/AppLayout';
 import { ScorePill, Card, PageHeader, Button, Badge } from '@/components/ui';
 import { leadsApi } from '@/lib/api';
@@ -22,6 +22,8 @@ export default function LeadDetailPage() {
   const [lead, setLead] = useState<Lead | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     leadsApi.get(id).then(({ data }) => setLead(data)).finally(() => setLoading(false));
@@ -38,6 +40,16 @@ export default function LeadDetailPage() {
     if (!lead) return;
     const { data } = await leadsApi.update(id, { ai_mode_active: !lead.ai_mode_active });
     setLead((l) => l ? { ...l, ai_mode_active: data.ai_mode_active } : l);
+  };
+
+  const handleDelete = () => {
+    if (!deleteConfirm) {
+      setDeleteConfirm(true);
+      setTimeout(() => setDeleteConfirm(false), 4000);
+    } else {
+      setDeleting(true);
+      leadsApi.delete(id).then(() => router.push('/leads')).finally(() => setDeleting(false));
+    }
   };
 
   if (loading) return <AppLayout><div className="flex items-center justify-center h-full text-gray-400">Loading…</div></AppLayout>;
@@ -57,6 +69,9 @@ export default function LeadDetailPage() {
             </Link>
             <Button size="sm" variant={lead.ai_mode_active ? 'secondary' : 'primary'} onClick={toggleAI}>
               <Bot className="w-3.5 h-3.5" />AI {lead.ai_mode_active ? 'on' : 'off'}
+            </Button>
+            <Button size="sm" variant={deleteConfirm ? 'danger' : 'secondary'} onClick={handleDelete} disabled={deleting}>
+              <Trash2 className="w-3.5 h-3.5" />{deleting ? 'Deleting…' : deleteConfirm ? '⚠ Confirm' : 'Delete'}
             </Button>
           </>
         }
@@ -161,6 +176,16 @@ export default function LeadDetailPage() {
             <p className="text-sm text-gray-600">{lead.notes}</p>
           </Card>
         )}
+        {/* Danger zone */}
+        <Card className="border-red-200">
+          <h3 className="text-sm font-medium text-red-700 mb-1">Danger zone</h3>
+          <p className="text-xs text-gray-500 mb-3">
+            Permanently deletes this lead and all associated conversations, messages, and quotes. This cannot be undone.
+          </p>
+          <Button variant="danger" size="sm" onClick={handleDelete} disabled={deleting}>
+            <Trash2 className="w-3.5 h-3.5" />{deleting ? 'Deleting…' : deleteConfirm ? '⚠ Click again to confirm' : 'Delete this lead'}
+          </Button>
+        </Card>
       </div>
     </AppLayout>
   );
